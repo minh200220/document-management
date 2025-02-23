@@ -1,7 +1,7 @@
-import { Col, Container, Row, Image, CloseButton } from 'react-bootstrap';
+import moment from 'moment';
+import { CloseButton, Col, Container, Image, Row } from 'react-bootstrap';
 import documentIcon from '../../assets/document.png';
 import Document from '../types/DocumentType';
-import moment from 'moment';
 
 type Props = {
   documents: Document[];

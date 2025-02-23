@@ -1,23 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState, AppDispatch } from '../store';
+import { useNavigate, useParams } from 'react-router';
+import { AlertToast, useAlertToast } from '../components/AlertToast';
+import DocumentList from '../components/DocumentList';
+import DocumentModal from '../components/DocumentModal';
 import {
-  getDocumentsByFolderId,
-  getDocumentById,
-  updateDocument,
+  clearDocument,
+  clearError,
   createDocument,
   deleteDocument,
-  clearDocument,
+  getDocumentById,
+  getDocumentsByFolderId,
+  updateDocument,
 } from '../slices/documentSlice';
 import { addDocToHistory } from '../slices/historySlice';
-import DocumentModal from '../components/DocumentModal';
-import { Button } from 'react-bootstrap';
-import DocumentList from '../components/DocumentList';
-
-type Mode = 'view' | 'edit' | 'add';
+import { AppDispatch, RootState } from '../store';
+import { Mode } from '../types/Mode';
 
 const DocumentPage: React.FC = () => {
+  const {
+    showAlert,
+    alert: alertToast,
+    toggleShowAlert,
+    toggleToast,
+  } = useAlertToast();
   const [mode, setMode] = useState<Mode>('view');
   const [show, setShow] = useState(false);
 
@@ -64,12 +71,15 @@ const DocumentPage: React.FC = () => {
     dispatch(getDocumentsByFolderId(id || ''));
   }, [dispatch, id]);
 
+  useEffect(() => {
+    if (error) {
+      toggleToast(error);
+      dispatch(clearError());
+    }
+  }, [error, dispatch, toggleToast]);
+
   if (isLoading) {
     return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
   }
 
   return (
@@ -105,6 +115,11 @@ const DocumentPage: React.FC = () => {
         changeMode={(value: Mode) => setMode(value)}
         handleUpdate={handleUpdate}
         handleCreate={handleCreate}
+      />
+      <AlertToast
+        showAlert={showAlert}
+        alert={alertToast}
+        toggleShowAlert={toggleShowAlert}
       />
     </div>
   );

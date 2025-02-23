@@ -1,7 +1,7 @@
-import { Col, Container, Row, Image, CloseButton } from 'react-bootstrap';
-import Folder from '../types/FolderType';
-import folderIcon from '../../assets/folder.png';
+import { CloseButton, Col, Container, Image, Row } from 'react-bootstrap';
 import { NavigateFunction } from 'react-router';
+import folderIcon from '../../assets/folder.png';
+import Folder from '../types/FolderType';
 
 type Props = {
   folders: Folder[];

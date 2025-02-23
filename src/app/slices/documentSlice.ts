@@ -26,6 +26,9 @@ export const documentSlice = createSlice({
     clearDocument: (state: DocumentState) => {
       state.document = null;
     },
+    clearError: (state: DocumentState) => {
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -202,6 +205,6 @@ export const deleteDocument = createAsyncThunk<
   }
 });
 
-export const { clearDocument } = documentSlice.actions;
+export const { clearDocument, clearError } = documentSlice.actions;
 
 export default documentSlice.reducer;

@@ -31,6 +31,7 @@ const FolderModal = (props: Props) => {
       </Modal.Body>
       <Modal.Footer>
         <Button
+          disabled={!name}
           variant="primary"
           onClick={() => {
             handleCreate(name);

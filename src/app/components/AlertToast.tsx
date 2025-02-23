@@ -1,44 +1,44 @@
 import { useState } from 'react';
 import { Toast, ToastContainer } from 'react-bootstrap';
 
-const useErrorToast = () => {
-  const [showError, setShowError] = useState(false);
-  const [error, setError] = useState('');
+const useAlertToast = () => {
+  const [showAlert, setShowAlert] = useState(false);
+  const [alert, setAlert] = useState('');
 
-  const toggleToast = (errorMessage: string) => {
-    setError(errorMessage);
-    setShowError(true);
+  const toggleToast = (alertMessage: string) => {
+    setAlert(alertMessage);
+    setShowAlert(true);
 
     setTimeout(() => {
-      setShowError(false);
+      setShowAlert(false);
     }, 5000);
   };
 
   return {
-    showError,
-    error,
-    toggleShowError: () => setShowError(false),
+    showAlert,
+    alert,
+    toggleShowAlert: () => setShowAlert(false),
     toggleToast,
   };
 };
 
 type Props = {
-  error: string;
-  showError: boolean;
-  toggleShowError: () => void;
+  alert: string;
+  showAlert: boolean;
+  toggleShowAlert: () => void;
 };
 
-const ErrorToast = ({ showError, error, toggleShowError }: Props) => {
+const AlertToast = ({ showAlert, alert, toggleShowAlert }: Props) => {
   return (
     <ToastContainer position="top-end" className="p-3" style={{ zIndex: 1 }}>
-      <Toast bg="info" show={showError} onClose={toggleShowError}>
+      <Toast bg="info" show={showAlert} onClose={toggleShowAlert}>
         <Toast.Header>
-          <strong className="me-auto">Error</strong>
+          <strong className="me-auto">Alert</strong>
         </Toast.Header>
-        <Toast.Body>{error}</Toast.Body>
+        <Toast.Body>{alert}</Toast.Body>
       </Toast>
     </ToastContainer>
   );
 };
 
-export { ErrorToast, useErrorToast };
+export { AlertToast, useAlertToast };

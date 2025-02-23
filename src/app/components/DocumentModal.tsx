@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import Markdown from 'react-markdown';
-
-type Mode = 'view' | 'edit' | 'add';
+import { Mode } from '../types/Mode';
 
 type Props = {
   isShow: boolean;
@@ -90,6 +89,7 @@ const DocumentModal = (props: Props) => {
         ) : null}
         <Button
           variant="primary"
+          disabled={!title || !content}
           onClick={() => {
             if (mode === 'edit') {
               handleUpdate(content);

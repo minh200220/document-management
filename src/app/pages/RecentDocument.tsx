@@ -1,12 +1,11 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../store';
 import { useEffect, useState } from 'react';
-import { addDocToHistory, getDocHistory } from '../slices/historySlice';
-import { getDocumentById, updateDocument } from '../slices/documentSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import DocumentList from '../components/DocumentList';
 import DocumentModal from '../components/DocumentModal';
-
-type Mode = 'view' | 'edit' | 'add';
+import { getDocumentById, updateDocument } from '../slices/documentSlice';
+import { addDocToHistory, getDocHistory } from '../slices/historySlice';
+import { AppDispatch, RootState } from '../store';
+import { Mode } from '../types/Mode';
 
 function RecentDocument() {
   const dispatch = useDispatch<AppDispatch>();

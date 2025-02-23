@@ -1,67 +1,51 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState, AppDispatch } from '../store';
-import {
-  createFolder,
-  getFolders,
-  deleteFolder,
-  clearError,
-} from '../slices/folderSlice';
-import { clearDocuments, searchDoc } from '../slices/searchDocSlice';
-import FolderModal from '../components/FolderModal';
-import FolderList from '../components/FolderList';
 import { Button } from 'react-bootstrap';
-import { ErrorToast, useErrorToast } from '../components/AlertToast';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
+import { AlertToast, useAlertToast } from '../components/AlertToast';
 import DocumentList from '../components/DocumentList';
-import { getDocumentById, updateDocument } from '../slices/documentSlice';
-import { addDocToHistory } from '../slices/historySlice';
-import { Mode } from '../types/Mode';
 import DocumentModal from '../components/DocumentModal';
+import FolderList from '../components/FolderList';
+import FolderModal from '../components/FolderModal';
+import { getDocumentById, updateDocument } from '../slices/documentSlice';
+import {
+  clearError,
+  createFolder,
+  deleteFolder,
+  getFolders,
+} from '../slices/folderSlice';
+import { addDocToHistory } from '../slices/historySlice';
+import { clearDocuments, searchDoc } from '../slices/searchDocSlice';
+import { AppDispatch, RootState } from '../store';
+import { Mode } from '../types/Mode';
 
 const FolderPage: React.FC = () => {
   const {
-    showError,
-    error: errorToast,
-    toggleShowError,
+    showAlert,
+    alert: alertToast,
+    toggleShowAlert,
     toggleToast,
-  } = useErrorToast();
-  const dispatch = useDispatch<AppDispatch>();
+  } = useAlertToast();
   const { folders, isLoading, error } = useSelector(
     (state: RootState) => state.folder
   );
-  const [show, setShow] = useState(false);
+  const { document } = useSelector((state: RootState) => state.document);
+  const { documents, isLoading: isHistoryLoading } = useSelector(
+    (state: RootState) => state.searchDoc
+  );
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const [mode, setMode] = useState<Mode>('view');
   const [showDoc, setShowDoc] = useState(false);
+  const [query, setQuery] = useState('');
 
   const handleCloseDoc = () => setShowDoc(false);
   const handleShowDoc = () => setShowDoc(true);
-
-  const { document } = useSelector((state: RootState) => state.document);
-  const { documents, isLoading: isHistoryLoading } = useSelector(
-    (state: RootState) => state.searchDoc
-  );
-
-  const [query, setQuery] = useState('');
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      if (query.trim()) {
-        dispatch(searchDoc({ keyword: query }));
-      } else {
-        dispatch(clearDocuments());
-      }
-    }, 500);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [query, dispatch]);
 
   const handleCreateFolder = (name: string) => {
     dispatch(createFolder(name));
@@ -84,6 +68,20 @@ const FolderPage: React.FC = () => {
       dispatch(updateDocument({ id: document.id, content }));
     }
   };
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (query.trim()) {
+        dispatch(searchDoc({ keyword: query }));
+      } else {
+        dispatch(clearDocuments());
+      }
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [query, dispatch]);
 
   useEffect(() => {
     dispatch(getFolders());
@@ -114,12 +112,15 @@ const FolderPage: React.FC = () => {
 
       {isHistoryLoading ? (
         <p>Loading...</p>
+      ) : documents.length === 0 && query ? (
+        <p>No documents found.</p>
       ) : (
         <DocumentList
           documents={documents}
           handleGetDocument={handleGetDocument}
         />
       )}
+
       <DocumentModal
         isShow={showDoc}
         handleClose={handleCloseDoc}
@@ -133,10 +134,10 @@ const FolderPage: React.FC = () => {
       <div>
         <div className="d-flex flex-row mt-3">
           <h2>Folder List</h2>
-          <ErrorToast
-            showError={showError}
-            error={errorToast}
-            toggleShowError={toggleShowError}
+          <AlertToast
+            showAlert={showAlert}
+            alert={alertToast}
+            toggleShowAlert={toggleShowAlert}
           />
           <Button onClick={handleShow} disabled={isLoading} className="ms-3">
             Create Folder
